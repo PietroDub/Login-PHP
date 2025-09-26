@@ -8,6 +8,17 @@ if (isset($_POST['register'])){
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
+
+    $checkEmail = $conn->query("SELECT email FROM users WHERE email = '$email'");
+    if ($checkEmail->num_rows > 0){
+        $_SESSION['register_error'] = 'Email is already registered!';
+        $_SESSION['active_form'] = 'register';
+    } else {
+        $conn->query("INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$password', '$role')");
+    }
+
+    header("Location: index.php");
+    exit();
 }
 
 if (isset($_POST['login'])){
@@ -24,7 +35,7 @@ if (isset($_POST['login'])){
             if($user['role'] === 'admin'){
                 header("Location: admin_page.php");
             } else {
-                header("Location: user_admin.php");
+                header("Location: user_page.php");
             }
             exit();
         }
